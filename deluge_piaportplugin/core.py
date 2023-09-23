@@ -56,6 +56,11 @@ class Core(CorePluginBase):
 
                 if core.get_listen_port() == port:
                     log.warning("Current port file lists blocked port: %d" % port)
+                    log.info("Updating listen port to: %d temporarily" % (port + 1))
+                    core.set_config({"listen_ports": [port + 1, port + 1]})
+                    torrents = core.get_session_state()
+                    core.force_reannounce(torrents)
+                    log.info("Updated listen port to: %d temporarily" % (port + 1))
                     return
 
                 core.set_config({"listen_ports": [port, port]})
